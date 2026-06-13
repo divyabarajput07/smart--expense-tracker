@@ -1,0 +1,110 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.dashboard {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.card {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    color: white;
+}
+
+.budget-card {background-color: #2ecc71;} /* lilo color */
+.expense-card{background-color: #e74c3c;} /* lal color */
+.balance-card{background-color: #3498db;} /* vadali color */
+
+.card h3 { margin: 0; font-size: 14px; opacity: 0.9;}
+.card p {margin: 5px 0 0; font-size: 20px; font-weight: bold;}
+
+/* part-2 */
+.form-section {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+input, select, button {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+/* button no look */
+button {
+    background-color: #34495e;
+    color: white;
+    font-weight: bold;
+    cursor: none;
+    transition: 0.2s;
+}
+
+button:hover {
+    background-color: #2c3e50;
+}
+
+/* part-3 */
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.expense-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #f9f9f9;
+    margin-bottom: 8px;
+    border-left: 5px solid #e74c3c;
+    border-radius: 4px;
+}
+
+/* જ્યારે બજેટ પૂરું થઈ જાય ત્યારે બેલેન્સ કાર્ડ આ કલરનું થઈ જશે */
+.card.balance-alert {
+    background-color: #c0392b !important; /* ઘાટો લાલ કલર */
+    animation: shake 0.5s ease; /* ધ્રુજારી વાળી ઇફેક્ટ */
+}
+
+/* લાલ બોક્સ ધ્રુજે તેવી એનિમેશન ઇફેક્ટ */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
