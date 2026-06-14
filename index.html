@@ -11,7 +11,7 @@
     <div class="container">
         <h1>Smart Expense Tracker</h1>
 
-        <!-- ભાગ ૧: સ્કોરબોર્ડ -->
+        <!-- Part 1: Dashboard Scoreboard -->
         <div class="dashboard">
             <div class="card budget-card">
                 <h3>Total Budget</h3>
@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <!-- 🔥 નવો ભાગ: બજેટ સેટ કરવા માટેનું ઇનપુટ ફોર્મ -->
+        <!-- Budget Setup Input Form Section -->
         <div class="form-section budget-setup-section" style="margin-bottom: 20px;">
             <h2>Set Your Budget</h2>
             <div style="display: flex; gap: 10px;">
@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <!-- ભાગ ૨: ફોર્મ -->
+        <!-- Part 2: Expense Input Form -->
         <div class="form-section">
             <h2>Add New Expense</h2>
             <form id="expense-form">
@@ -53,11 +53,11 @@
             </form>
         </div>
 
-        <!-- ભાગ ૩: ઇતિહાસ -->
+        <!-- Part 3: Expense History List -->
         <div class="history-section">
             <h2>Expense History</h2>
 
-            <!-- ફિલ્ટર ઓપ્શન -->
+            <!-- Category Filter Selection -->
             <div class="filter-section" style="margin-bottom: 15px;">
                 <label for="filter-category" style="font-weight: bold; margin-right: 10px;">Filter by Category:</label>
                 <select id="filter-category" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
@@ -70,7 +70,7 @@
             </div>
             
             <ul id="expense-list">
-                <!-- એન્ટ્રીઓ અહીં દેખાશે -->
+                <!-- Dynamic entries will be rendered here -->
             </ul>
         </div>
     </div>
