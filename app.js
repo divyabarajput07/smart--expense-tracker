@@ -2,6 +2,10 @@
 const localStorageTransactions = JSON.parse(localStorage.getItem('transactions'));
 let transactions = localStorage.getItem('transactions') !== null ? localStorageTransactions : [];
 
+// --- નવું: LocalStorage માંથી બજેટ લોડ કરવું, જો ન હોય તો ડિફોલ્ટ 0 રાખવું ---
+const localStorageBudget = localStorage.getItem('totalBudget');
+let totalBudget = localStorageBudget !== null ? Number(localStorageBudget) : 0;
+
 // ૧. HTML ના એલિમેન્ટ્સ પકડવા
 const expenseForm = document.getElementById('expense-form');
 const expenseNameInput = document.getElementById('expense-name');
@@ -15,8 +19,29 @@ const totalBudgetEl = document.getElementById('total-budget');
 const totalExpenseEl = document.getElementById('total-expense');
 const availableBalanceEl = document.getElementById('available-balance');
 
-// ૨. શરૂઆતનું બજેટ સેટ કરવું
-let totalBudget = 20000;
+// --- નવા HTML એલિમેન્ટ્સ (બજેટ સેટ કરવા માટે) ---
+const budgetInput = document.getElementById('budget-input');
+const setBudgetBtn = document.getElementById('set-budget-btn');
+
+
+// ==================== નવું લોજિક: યુઝર બજેટ સેટ કરે ત્યારે ====================
+if (setBudgetBtn) {
+    setBudgetBtn.addEventListener('click', function() {
+        const enteredBudget = Number(budgetInput.value);
+        
+        if (enteredBudget > 0) {
+            totalBudget = enteredBudget; // નવું બજેટ સેટ થશે
+            
+            // LocalStorage માં બજેટ સેવ કરવું
+            localStorage.setItem('totalBudget', totalBudget);
+            
+            updateValues();             // સ્ક્રીન પર આંકડા બદલવા
+            budgetInput.value = '';     // ઇનપુટ બોક્સ ખાલી કરવું
+        } else {
+            alert('મહેરબાની કરીને સાચું બજેટ ઉમેરો!');
+        }
+    });
+}
 
 // ==================== નવું ફંક્શન: સ્ક્રીન પર લિસ્ટ બતાવવું ====================
 function addExpenseToDOM(transaction) {
@@ -46,7 +71,7 @@ function updateValues() {
     availableBalanceEl.innerText = `₹ ${remainingBalance}`;
 
     // રેડ એલર્ટ લોજિક
-    if (remainingBalance <= 0) {
+    if (remainingBalance <= 0 && totalBudget > 0) {
         availableBalanceEl.parentElement.classList.add('balance-alert');
     } else {
         availableBalanceEl.parentElement.classList.remove('balance-alert');
