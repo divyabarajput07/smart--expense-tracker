@@ -2,7 +2,7 @@
 
 A smart, responsive web application built with pure JavaScript to help users manage their daily expenses, set monthly budgets, and track remaining balances in real-time.
 
-🌐 **Live Demo:** [Click Here to View Project](https://github.io)
+🌐 **Live Demo:** [Click Here to View Project](https://divyabarajput07.github.io/smart--expense-tracker/)
 
 ---
 
