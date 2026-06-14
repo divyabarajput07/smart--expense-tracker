@@ -13,7 +13,7 @@ body {
     background-color: #ffffff;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -37,14 +37,15 @@ h1 {
     color: white;
 }
 
-.budget-card {background-color: #2ecc71;} /* lilo color */
-.expense-card{background-color: #e74c3c;} /* lal color */
-.balance-card{background-color: #3498db;} /* vadali color */
+/* Dashboard card colors */
+.budget-card {background-color: #2ecc71;} 
+.expense-card{background-color: #e74c3c;} 
+.balance-card{background-color: #3498db;} 
 
 .card h3 { margin: 0; font-size: 14px; opacity: 0.9;}
 .card p {margin: 5px 0 0; font-size: 20px; font-weight: bold;}
 
-/* part-2 */
+/* Part 2: Form Section */
 .form-section {
     background: #f9f9f9;
     padding: 20px;
@@ -65,12 +66,12 @@ input, select, button {
     font-size: 16px;
 }
 
-/* button no look */
+/* Button styling */
 button {
     background-color: #34495e;
     color: white;
     font-weight: bold;
-    cursor: none;
+    cursor: pointer;
     transition: 0.2s;
 }
 
@@ -78,8 +79,7 @@ button:hover {
     background-color: #2c3e50;
 }
 
-/* part-3 */
-
+/* Part 3: Expense List */
 ul {
     list-style: none;
     padding: 0;
@@ -96,13 +96,13 @@ ul {
     border-radius: 4px;
 }
 
-/* જ્યારે બજેટ પૂરું થઈ જાય ત્યારે બેલેન્સ કાર્ડ આ કલરનું થઈ જશે */
+/* Alert style for balance card when budget is exhausted */
 .card.balance-alert {
-    background-color: #c0392b !important; /* ઘાટો લાલ કલર */
-    animation: shake 0.5s ease; /* ધ્રુજારી વાળી ઇફેક્ટ */
+    background-color: #c0392b !important; 
+    animation: shake 0.5s ease; 
 }
 
-/* લાલ બોક્સ ધ્રુજે તેવી એનિમેશન ઇફેક્ટ */
+/* Shake animation effect for the alert state */
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px); }
