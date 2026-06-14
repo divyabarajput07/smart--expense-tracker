@@ -1,12 +1,12 @@
-// ==================== LOCAL STORAGE (ડેટા લોડ કરવો) ====================
+// ==================== LOCAL STORAGE (loading data) ====================
 const localStorageTransactions = JSON.parse(localStorage.getItem('transactions'));
 let transactions = localStorage.getItem('transactions') !== null ? localStorageTransactions : [];
 
-// LocalStorage માંથી બજેટ લોડ કરવું
+// Loading total budget into LocalStorage 
 const localStorageBudget = localStorage.getItem('totalBudget');
 let totalBudget = localStorageBudget !== null ? Number(localStorageBudget) : 0;
 
-// ૧. HTML ના એલિમેન્ટ્સ પકડવા
+// 1. To access HTML elements
 const expenseForm = document.getElementById('expense-form');
 const expenseNameInput = document.getElementById('expense-name');
 const expenseAmountInput = document.getElementById('expense-amount');
@@ -22,7 +22,7 @@ const availableBalanceEl = document.getElementById('available-balance');
 const budgetInput = document.getElementById('budget-input');
 const setBudgetBtn = document.getElementById('set-budget-btn');
 
-// ==================== યુઝર બજેટ સેટ કરે ત્યારે ====================
+// ==================== When the user sets a budget ====================
 if (setBudgetBtn) {
     setBudgetBtn.addEventListener('click', function() {
         const enteredBudget = Number(budgetInput.value);
@@ -32,44 +32,42 @@ if (setBudgetBtn) {
             updateValues();
             budgetInput.value = '';
         } else {
-            alert('મહેરબાની કરીને સાચું બજેટ ઉમેરો!');
+            alert('Please add the correct budget!');
         }
     });
 }
 
-// ==================== સુધારેલું ફંક્શન: સ્ક્રીન પર લિસ્ટ બતાવવું (Delete Button સાથે) ====================
+// ==================== Improved function: Showing a list on the screen (With delete button) ====================
 function addExpenseToDOM(transaction) {
     const li = document.createElement('li');
     li.classList.add('expense-item');
     li.setAttribute('data-category', transaction.category); 
     
-    // આ કોડ લિસ્ટની અંદર જમણી બાજુ લાલ કલરનું ❌ Delete બટન ગોઠવી દેશે
+    // Here We have added a delete (❌) button inside the list and given it an onclick event
     li.innerHTML = `
-        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-            <div>
-                <strong>${transaction.name}</strong> (${transaction.category}) <br>
-                <small style="color: #666;">📅 ${transaction.date}</small>
-            </div>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <span style="font-weight: bold;">₹ ${transaction.amount}</span>
-                <button onclick="deleteExpense(${transaction.id})" style="background-color: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">❌ Delete</button>
-            </div>
+        <div>
+            <strong>${transaction.name}</strong> (${transaction.category}) <br>
+            <small style="color: #666;">📅 ${transaction.date}</small>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span>₹ ${transaction.amount}</span>
+            <button onclick="deleteExpense(${transaction.id})" style="background-color: #e74c3c; color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer; font-weight: bold;">❌</button>
         </div>
     `;
     expenseList.appendChild(li);
 }
 
-// ==================== નવું ફંક્શન: ખર્ચ ડિલીટ કરવા માટે ====================
+// ==================== New function: To delete expense ====================
 function deleteExpense(id) {
-    // આ મેથડ આપેલા id સિવાયના બધા ખર્ચ રાખીને બાકીનાને એરેમાંથી ફિલ્ટર કરી દેશે
+    // This method filters out the expense with the given ID and keeps the rest in the array
     transactions = transactions.filter(transaction => transaction.id !== id);
     
-    // LocalStorage અને સ્ક્રીન પર દેખાતા આંકડા અપડેટ કરવા
+    // Update LocalStorage and refresh the display on the screen
     updateLocalStorage();
     init(); 
 }
 
-// ==================== હિસાબ ગણવો (Live Calculation) ====================
+// ==================== Live Calculation (Budget & Expenses) ====================
 function updateValues() {
     const totalExpense = transactions.reduce((acc, item) => acc + item.amount, 0);
     const remainingBalance = totalBudget - totalExpense;
@@ -85,7 +83,7 @@ function updateValues() {
     }
 }
 
-// ૩. જ્યારે યુઝર "Add Expense" બટન દબાવે ત્યારે
+// 3. When the user submits the "Add Expense" form
 expenseForm.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -94,7 +92,7 @@ expenseForm.addEventListener('submit', function(event) {
     const date = expenseDateInput.value;
     const category = expenseCategoryInput.value;
 
-    // અહીં આપણે દરેક નવા ખર્ચને એક યુનિક ID (Date.now()) આપી રહ્યા છીએ
+    // Assigning a unique ID (using Date.now()) to every new expense
     const newTransaction = {
         id: Date.now(), 
         name: name,
@@ -114,7 +112,7 @@ expenseForm.addEventListener('submit', function(event) {
     showAllExpenses();
 });
 
-// ૫. ફિલ્ટર ચેન્જ થાય ત્યારનું લોજિક
+// 5. Logic for category filter change
 filterCategory.addEventListener('change', function() {
     const selectedCategory = filterCategory.value;
     const items = expenseList.getElementsByClassName('expense-item');
@@ -129,6 +127,7 @@ filterCategory.addEventListener('change', function() {
     }
 });
 
+// Function to show all expenses
 function showAllExpenses() {
     const items = expenseList.getElementsByClassName('expense-item');
     for (let item of items) {
@@ -136,12 +135,12 @@ function showAllExpenses() {
     }
 }
 
-// ડેટાને LocalStorage માં સેવ કરવાનું ફંક્શન
+// Function to save data in LocalStorage
 function updateLocalStorage() {
   localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
-// એપ શરૂ કરવાનું મેઈન ફંક્શન
+// Main function to initialize the application
 function init() {
     expenseList.innerHTML = ''; 
     transactions.forEach(addExpenseToDOM); 
