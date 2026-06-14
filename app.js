@@ -43,15 +43,17 @@ function addExpenseToDOM(transaction) {
     li.classList.add('expense-item');
     li.setAttribute('data-category', transaction.category); 
     
-    // અહીં આપણે લિસ્ટની અંદર એક Delete (❌) બટન ઉમેર્યું છે અને તેમાં onclick ઇવેન્ટ આપી છે
+    // આ કોડ લિસ્ટની અંદર જમણી બાજુ લાલ કલરનું ❌ Delete બટન ગોઠવી દેશે
     li.innerHTML = `
-        <div>
-            <strong>${transaction.name}</strong> (${transaction.category}) <br>
-            <small style="color: #666;">📅 ${transaction.date}</small>
-        </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span>₹ ${transaction.amount}</span>
-            <button onclick="deleteExpense(${transaction.id})" style="background-color: #e74c3c; color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer; font-weight: bold;">❌</button>
+        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <div>
+                <strong>${transaction.name}</strong> (${transaction.category}) <br>
+                <small style="color: #666;">📅 ${transaction.date}</small>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-weight: bold;">₹ ${transaction.amount}</span>
+                <button onclick="deleteExpense(${transaction.id})" style="background-color: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">❌ Delete</button>
+            </div>
         </div>
     `;
     expenseList.appendChild(li);
