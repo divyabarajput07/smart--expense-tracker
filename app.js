@@ -2,7 +2,7 @@
 const localStorageTransactions = JSON.parse(localStorage.getItem('transactions'));
 let transactions = localStorage.getItem('transactions') !== null ? localStorageTransactions : [];
 
-// --- નવું: LocalStorage માંથી બજેટ લોડ કરવું, જો ન હોય તો ડિફોલ્ટ 0 રાખવું ---
+// LocalStorage માંથી બજેટ લોડ કરવું
 const localStorageBudget = localStorage.getItem('totalBudget');
 let totalBudget = localStorageBudget !== null ? Number(localStorageBudget) : 0;
 
@@ -19,58 +19,63 @@ const totalBudgetEl = document.getElementById('total-budget');
 const totalExpenseEl = document.getElementById('total-expense');
 const availableBalanceEl = document.getElementById('available-balance');
 
-// --- નવા HTML એલિમેન્ટ્સ (બજેટ સેટ કરવા માટે) ---
 const budgetInput = document.getElementById('budget-input');
 const setBudgetBtn = document.getElementById('set-budget-btn');
 
-
-// ==================== નવું લોજિક: યુઝર બજેટ સેટ કરે ત્યારે ====================
+// ==================== યુઝર બજેટ સેટ કરે ત્યારે ====================
 if (setBudgetBtn) {
     setBudgetBtn.addEventListener('click', function() {
         const enteredBudget = Number(budgetInput.value);
-        
         if (enteredBudget > 0) {
-            totalBudget = enteredBudget; // નવું બજેટ સેટ થશે
-            
-            // LocalStorage માં બજેટ સેવ કરવું
+            totalBudget = enteredBudget;
             localStorage.setItem('totalBudget', totalBudget);
-            
-            updateValues();             // સ્ક્રીન પર આંકડા બદલવા
-            budgetInput.value = '';     // ઇનપુટ બોક્સ ખાલી કરવું
+            updateValues();
+            budgetInput.value = '';
         } else {
             alert('મહેરબાની કરીને સાચું બજેટ ઉમેરો!');
         }
     });
 }
 
-// ==================== નવું ફંક્શન: સ્ક્રીન પર લિસ્ટ બતાવવું ====================
+// ==================== સુધારેલું ફંક્શન: સ્ક્રીન પર લિસ્ટ બતાવવું (Delete Button સાથે) ====================
 function addExpenseToDOM(transaction) {
     const li = document.createElement('li');
     li.classList.add('expense-item');
     li.setAttribute('data-category', transaction.category); 
     
+    // અહીં આપણે લિસ્ટની અંદર એક Delete (❌) બટન ઉમેર્યું છે અને તેમાં onclick ઇવેન્ટ આપી છે
     li.innerHTML = `
         <div>
             <strong>${transaction.name}</strong> (${transaction.category}) <br>
             <small style="color: #666;">📅 ${transaction.date}</small>
         </div>
-        <span>₹ ${transaction.amount}</span>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span>₹ ${transaction.amount}</span>
+            <button onclick="deleteExpense(${transaction.id})" style="background-color: #e74c3c; color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer; font-weight: bold;">❌</button>
+        </div>
     `;
     expenseList.appendChild(li);
 }
 
-// ==================== નવું ફંક્શન: હિસાબ ગણવો (Live Calculation) ====================
+// ==================== નવું ફંક્શન: ખર્ચ ડિલીટ કરવા માટે ====================
+function deleteExpense(id) {
+    // આ મેથડ આપેલા id સિવાયના બધા ખર્ચ રાખીને બાકીનાને એરેમાંથી ફિલ્ટર કરી દેશે
+    transactions = transactions.filter(transaction => transaction.id !== id);
+    
+    // LocalStorage અને સ્ક્રીન પર દેખાતા આંકડા અપડેટ કરવા
+    updateLocalStorage();
+    init(); 
+}
+
+// ==================== હિસાબ ગણવો (Live Calculation) ====================
 function updateValues() {
-    // એરેમાંથી બધા ખર્ચનો સરવાળો કરવો
     const totalExpense = transactions.reduce((acc, item) => acc + item.amount, 0);
     const remainingBalance = totalBudget - totalExpense;
 
-    // સ્ક્રીન પર આંકડા બદલવા
     totalBudgetEl.innerText = `₹ ${totalBudget}`;
     totalExpenseEl.innerText = `₹ ${totalExpense}`;
     availableBalanceEl.innerText = `₹ ${remainingBalance}`;
 
-    // રેડ એલર્ટ લોજિક
     if (remainingBalance <= 0 && totalBudget > 0) {
         availableBalanceEl.parentElement.classList.add('balance-alert');
     } else {
@@ -80,33 +85,29 @@ function updateValues() {
 
 // ૩. જ્યારે યુઝર "Add Expense" બટન દબાવે ત્યારે
 expenseForm.addEventListener('submit', function(event) {
-    event.preventDefault(); // પેજ રિફ્રેશ થતું અટકાવવા
+    event.preventDefault();
 
     const name = expenseNameInput.value;
     const amount = Number(expenseAmountInput.value);
     const date = expenseDateInput.value;
     const category = expenseCategoryInput.value;
 
-    // ૧. નવા ખર્ચનો ઓબ્જેક્ટ બનાવવો
+    // અહીં આપણે દરેક નવા ખર્ચને એક યુનિક ID (Date.now()) આપી રહ્યા છીએ
     const newTransaction = {
+        id: Date.now(), 
         name: name,
         amount: amount,
         date: date,
         category: category
     };
 
-    // ૨. તેને એરેમાં ઉમેરવો
     transactions.push(newTransaction);
 
-    // ૩. DOM પર લિસ્ટ ઉમેરવું અને ગણતરી અપડેટ કરવી
     addExpenseToDOM(newTransaction);
     updateValues();
     updateLocalStorage();
 
-    // ફોર્મ ખાલી કરવું
     expenseForm.reset();
-    
-    // ફિલ્ટર પાછું 'All' પર સેટ કરવું
     filterCategory.value = 'All';
     showAllExpenses();
 });
@@ -118,7 +119,6 @@ filterCategory.addEventListener('change', function() {
 
     for (let item of items) {
         const itemCategory = item.getAttribute('data-category');
-
         if (selectedCategory === 'All' || itemCategory === selectedCategory) {
             item.style.display = 'flex';
         } else {
@@ -139,12 +139,11 @@ function updateLocalStorage() {
   localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
-// ==================== એપ શરૂ કરવાનું મેઈન ફંક્શન (જૂનો ડેટા પાછો લાવવા) ====================
+// એપ શરૂ કરવાનું મેઈન ફંક્શન
 function init() {
-    expenseList.innerHTML = ''; // પહેલા લિસ્ટ ખાલી કરવું
-    transactions.forEach(addExpenseToDOM); // સેવ થયેલો ડેટા એક-એક કરીને સ્ક્રીન પર લાવવો
-    updateValues(); // હિસાબ ગણવો
+    expenseList.innerHTML = ''; 
+    transactions.forEach(addExpenseToDOM); 
+    updateValues(); 
 }
 
-// વેબસાઈટ લોડ થતા જ રન કરો
 init();
