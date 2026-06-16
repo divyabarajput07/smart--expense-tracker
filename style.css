@@ -1,3 +1,6 @@
+/* ==========================================
+   1. Base & Layout Styles
+   ========================================== */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f7f6;
@@ -22,6 +25,9 @@ h1 {
     margin-bottom: 30px;
 }
 
+/* ==========================================
+   2. Dashboard Scoreboard Section
+   ========================================== */
 .dashboard {
     display: flex;
     justify-content: space-between;
@@ -38,19 +44,47 @@ h1 {
 }
 
 /* Dashboard card colors */
-.budget-card {background-color: #2ecc71;} 
-.expense-card{background-color: #e74c3c;} 
-.balance-card{background-color: #3498db;} 
+.budget-card { background-color: #2ecc71; } 
+.expense-card { background-color: #e74c3c; } 
+.balance-card { background-color: #3498db; } 
 
-.card h3 { margin: 0; font-size: 14px; opacity: 0.9;}
-.card p {margin: 5px 0 0; font-size: 20px; font-weight: bold;}
+.card h3 { 
+    margin: 0; 
+    font-size: 14px; 
+    opacity: 0.9;
+}
 
-/* Part 2: Form Section */
+.card p {
+    margin: 5px 0 0; 
+    font-size: 20px; 
+    font-weight: bold;
+}
+
+/* Alert style for balance card when budget is exhausted */
+.card.balance-alert {
+    background-color: #c0392b !important; 
+    animation: shake 0.5s ease; 
+}
+
+/* ==========================================
+   3. Form Sections (Budget Setup & Add Expense)
+   ========================================== */
 .form-section {
     background: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 30px;
+}
+
+/* Extracted from original Budget Form wrapper */
+.budget-setup-section {
+    margin-bottom: 20px;
+}
+
+/* Extracted from budget layout row */
+.budget-input-group {
+    display: flex;
+    gap: 10px;
 }
 
 form {
@@ -59,6 +93,7 @@ form {
     gap: 12px;
 }
 
+/* Base input form elements */
 input, select, button {
     padding: 12px;
     border: 1px solid #ddd;
@@ -66,7 +101,15 @@ input, select, button {
     font-size: 16px;
 }
 
-/* Button styling */
+/* Extracted specific styles for budget text field */
+.budget-input-field {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* Button UI elements styling */
 button {
     background-color: #34495e;
     color: white;
@@ -79,7 +122,38 @@ button:hover {
     background-color: #2c3e50;
 }
 
-/* Part 3: Expense List */
+/* Extracted specific styles for budget confirm button */
+.budget-submit-btn {
+    padding: 10px 15px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* ==========================================
+   4. Expense History & Filter Section
+   ========================================== */
+/* Extracted wrapper styles for category filter row */
+.filter-section {
+    margin-bottom: 15px;
+}
+
+/* Extracted text styling for filter descriptive text */
+.filter-label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* Extracted selective dropdown element styles */
+.filter-dropdown {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
 ul {
     list-style: none;
     padding: 0;
@@ -96,13 +170,9 @@ ul {
     border-radius: 4px;
 }
 
-/* Alert style for balance card when budget is exhausted */
-.card.balance-alert {
-    background-color: #c0392b !important; 
-    animation: shake 0.5s ease; 
-}
-
-/* Shake animation effect for the alert state */
+/* ==========================================
+   5. Keyframe Animations
+   ========================================== */
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px); }
