@@ -28,11 +28,11 @@
         </div>
 
         <!-- Budget Setup Input Form Section -->
-        <div class="form-section budget-setup-section" style="margin-bottom: 20px;">
+        <div class="form-section budget-setup-section">
             <h2>Set Your Budget</h2>
-            <div style="display: flex; gap: 10px;">
-                <input type="number" id="budget-input" placeholder="Enter Total Budget (₹)" style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ddd;" required>
-                <button type="button" id="set-budget-btn" style="padding: 10px 15px; background-color: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Set Budget</button>
+            <div class="budget-input-group">
+                <input type="number" id="budget-input" class="budget-input-field" placeholder="Enter Total Budget (₹)" required>
+                <button type="button" id="set-budget-btn" class="budget-submit-btn">Set Budget</button>
             </div>
         </div>
 
@@ -58,9 +58,9 @@
             <h2>Expense History</h2>
 
             <!-- Category Filter Selection -->
-            <div class="filter-section" style="margin-bottom: 15px;">
-                <label for="filter-category" style="font-weight: bold; margin-right: 10px;">Filter by Category:</label>
-                <select id="filter-category" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+            <div class="filter-section">
+                <label for="filter-category" class="filter-label">Filter by Category:</label>
+                <select id="filter-category" class="filter-dropdown">
                     <option value="All">All Categories</option>
                     <option value="Food">Food</option>
                     <option value="Bills">Bills</option>
