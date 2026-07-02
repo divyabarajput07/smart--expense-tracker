@@ -1,12 +1,14 @@
-// ==================== LOCAL STORAGE (loading data) ====================
+// ==================== LOCAL STORAGE (Loading Data) ====================
 const localStorageTransactions = JSON.parse(localStorage.getItem('transactions'));
 let transactions = localStorage.getItem('transactions') !== null ? localStorageTransactions : [];
 
-// Loading total budget into LocalStorage 
 const localStorageBudget = localStorage.getItem('totalBudget');
 let totalBudget = localStorageBudget !== null ? Number(localStorageBudget) : 0;
 
-// 1. To access HTML elements
+// Track application edit states globally
+let editId = null;
+
+// DOM Elements Selection
 const expenseForm = document.getElementById('expense-form');
 const expenseNameInput = document.getElementById('expense-name');
 const expenseAmountInput = document.getElementById('expense-amount');
@@ -14,6 +16,7 @@ const expenseDateInput = document.getElementById('expense-date');
 const expenseCategoryInput = document.getElementById('expense-category');
 const expenseList = document.getElementById('expense-list');
 const filterCategory = document.getElementById('filter-category');
+const searchExpenseInput = document.getElementById('search-expense'); 
 
 const totalBudgetEl = document.getElementById('total-budget');
 const totalExpenseEl = document.getElementById('total-expense');
@@ -21,8 +24,9 @@ const availableBalanceEl = document.getElementById('available-balance');
 
 const budgetInput = document.getElementById('budget-input');
 const setBudgetBtn = document.getElementById('set-budget-btn');
+const themeToggleBtn = document.getElementById('theme-toggle'); 
 
-// ==================== When the user sets a budget ====================
+// ==================== Set Initial Budget Logic ====================
 if (setBudgetBtn) {
     setBudgetBtn.addEventListener('click', function() {
         const enteredBudget = Number(budgetInput.value);
@@ -37,37 +41,48 @@ if (setBudgetBtn) {
     });
 }
 
-// ==================== Improved function: Showing a list on the screen (With delete button) ====================
+// ==================== Render Expense Item to DOM Section ====================
 function addExpenseToDOM(transaction) {
     const li = document.createElement('li');
     li.classList.add('expense-item');
     li.setAttribute('data-category', transaction.category); 
-    
-    // Here We have added a delete (❌) button inside the list and given it an onclick event
+
     li.innerHTML = `
         <div>
             <strong>${transaction.name}</strong> (${transaction.category}) <br>
-            <small style="color: #666;">📅 ${transaction.date}</small>
+            <small style="color: #666;" class="expense-date-text">📅 ${transaction.date}</small>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
             <span>₹ ${transaction.amount}</span>
+            <button onclick="editExpense(${transaction.id})" style="background-color: #f39c12; color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer; font-weight: bold;">✏️</button>
             <button onclick="deleteExpense(${transaction.id})" style="background-color: #e74c3c; color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer; font-weight: bold;">❌</button>
         </div>
     `;
     expenseList.appendChild(li);
 }
 
-// ==================== New function: To delete expense ====================
+// ==================== Edit Existing Expense Logic ====================
+function editExpense(id) {
+    const transactionToEdit = transactions.find(t => t.id === id);
+    if (transactionToEdit) {
+        expenseNameInput.value = transactionToEdit.name;
+        expenseAmountInput.value = transactionToEdit.amount;
+        expenseDateInput.value = transactionToEdit.date;
+        expenseCategoryInput.value = transactionToEdit.category;
+        expenseForm.querySelector('button[type="submit"]').innerText = "Update Expense (✏️)";
+        editId = id;
+        expenseForm.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// ==================== Delete Expense Logic ====================
 function deleteExpense(id) {
-    // This method filters out the expense with the given ID and keeps the rest in the array
     transactions = transactions.filter(transaction => transaction.id !== id);
-    
-    // Update LocalStorage and refresh the display on the screen
     updateLocalStorage();
     init(); 
 }
 
-// ==================== Live Calculation (Budget & Expenses) ====================
+// ==================== Live Financial Scoreboard Calculation ====================
 function updateValues() {
     const totalExpense = transactions.reduce((acc, item) => acc + item.amount, 0);
     const remainingBalance = totalBudget - totalExpense;
@@ -83,64 +98,107 @@ function updateValues() {
     }
 }
 
-// 3. When the user submits the "Add Expense" form
+// ==================== Form Submission Handle (Add/Update Expense) ====================
 expenseForm.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const name = expenseNameInput.value;
+    const name = expenseNameInput.value.trim();
     const amount = Number(expenseAmountInput.value);
     const date = expenseDateInput.value;
     const category = expenseCategoryInput.value;
 
-    // Assigning a unique ID (using Date.now()) to every new expense
-    const newTransaction = {
-        id: Date.now(), 
-        name: name,
-        amount: amount,
-        date: date,
-        category: category
-    };
+    if (name === '' || isNaN(amount) || date === '' || category === '') {
+        alert('Please fill out all the fields correctly!');
+        return; 
+    }
+    if (amount <= 0) {
+        alert('Expense amount must be greater than 0!');
+        return;
+    }
 
-    transactions.push(newTransaction);
+    const totalExpenseSoFar = transactions.reduce((acc, item) => acc + item.amount, 0);
+    let availableBalance = totalBudget - totalExpenseSoFar;
+    
+    if (editId !== null) {
+        const oldTransaction = transactions.find(t => t.id === editId);
+        if (oldTransaction) availableBalance += oldTransaction.amount;
+    }
 
-    addExpenseToDOM(newTransaction);
-    updateValues();
+    if (amount > availableBalance && totalBudget > 0) {
+        const proceed = confirm('Warning: This expense exceeds your remaining budget. Do you still want to proceed?');
+        if (!proceed) return; 
+    }
+
+    if (editId !== null) {
+        transactions = transactions.map(t => t.id === editId ? { id: editId, name, amount, date, category } : t);
+        editId = null; 
+        expenseForm.querySelector('button[type="submit"]').innerText = "Add Expense (+)";
+    } else {
+        const newTransaction = {
+            id: Date.now(), 
+            name: name,
+            amount: amount,
+            date: date,
+            category: category
+        };
+        transactions.push(newTransaction);
+    }
+
     updateLocalStorage();
+    init();
 
     expenseForm.reset();
     filterCategory.value = 'All';
-    showAllExpenses();
+    if(searchExpenseInput) searchExpenseInput.value = '';
 });
 
-// 5. Logic for category filter change
-filterCategory.addEventListener('change', function() {
-    const selectedCategory = filterCategory.value;
-    const items = expenseList.getElementsByClassName('expense-item');
-
-    for (let item of items) {
-        const itemCategory = item.getAttribute('data-category');
-        if (selectedCategory === 'All' || itemCategory === selectedCategory) {
-            item.style.display = 'flex';
-        } else {
-            item.style.display = 'none';
-        }
-    }
-});
-
-// Function to show all expenses
-function showAllExpenses() {
-    const items = expenseList.getElementsByClassName('expense-item');
-    for (let item of items) {
-        item.style.display = 'flex';
-    }
+// ==================== Live Filter and Search Handling Section ====================
+if (searchExpenseInput) {
+    searchExpenseInput.addEventListener('input', filterAndSearchExpenses);
+}
+if (filterCategory) {
+    filterCategory.addEventListener('change', filterAndSearchExpenses);
 }
 
-// Function to save data in LocalStorage
+function filterAndSearchExpenses() {
+    const searchText = searchExpenseInput ? searchExpenseInput.value.toLowerCase() : '';
+    const selectedCategory = filterCategory ? filterCategory.value : 'All';
+    
+    expenseList.innerHTML = '';
+    
+    const filtered = transactions.filter(t => {
+        const matchesCategory = selectedCategory === 'All' || t.category === selectedCategory;
+        const matchesSearch = t.name.toLowerCase().includes(searchText);
+        return matchesCategory && matchesSearch;
+    });
+    
+    filtered.forEach(addExpenseToDOM);
+}
+
 function updateLocalStorage() {
   localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
-// Main function to initialize the application
+// ==================== Theme Controller (Dark / Light Mode) ====================
+if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+    if (themeToggleBtn) themeToggleBtn.innerText = '☀️';
+}
+
+if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        if (document.body.classList.contains('dark-mode')) {
+            themeToggleBtn.innerText = '☀️';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            themeToggleBtn.innerText = '🌙';
+            localStorage.setItem('theme', 'light');
+        }
+    });
+}
+
+// Core App Initialization Function
 function init() {
     expenseList.innerHTML = ''; 
     transactions.forEach(addExpenseToDOM); 
