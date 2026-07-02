@@ -3,7 +3,7 @@
 A smart, responsive, and secure personal finance web application built using pure Vanilla JavaScript, HTML5, and CSS3. This application helps users set a monthly budget, track real-time expenses with strict data validation, search transactions, and manage financial logs completely offline.
 
 ## 🚀 Live Demo
-[Add your GitHub Pages link here if hosted, e.g., https://github.io]
+[https://divyabarajput07.github.io/smart--expense-tracker/]
 
 ---
 
