@@ -9,6 +9,11 @@
 <body>
 
     <div class="container">
+        <!-- Theme Toggle Button for Dark/Light Mode -->
+        <button id="theme-toggle" style="background: none; border: none; font-size: 24px; cursor: pointer; float: right;">
+            🌙
+        </button>
+
         <h1>Smart Expense Tracker</h1>
 
         <!-- Part 1: Dashboard Scoreboard -->
@@ -53,9 +58,14 @@
             </form>
         </div>
 
-        <!-- Part 3: Expense History List -->
+        <!-- Part 3: Expense History List & Filtering -->
         <div class="history-section">
             <h2>Expense History</h2>
+
+            <!-- Real-time Search Filter Input -->
+            <div class="search-section" style="margin-bottom: 15px;">
+                <input type="text" id="search-expense" placeholder="🔍 Search expenses by name..." style="width: 100%; box-sizing: border-box; padding: 10px; border-radius: 5px; border: 1px solid #ddd;">
+            </div>
 
             <!-- Category Filter Selection -->
             <div class="filter-section">
@@ -68,7 +78,7 @@
                     <option value="Other">Other</option>
                 </select>
             </div>
-            
+
             <ul id="expense-list">
                 <!-- Dynamic entries will be rendered here -->
             </ul>
